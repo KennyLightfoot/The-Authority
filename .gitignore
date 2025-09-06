@@ -1,0 +1,38 @@
+# FiveM Server Files
+cache/
+db/
+server/
+*.log
+*.db
+
+# Environment and Secrets
+.env
+*.env
+server.cfg
+
+# Temporary Files
+tmp/
+*.tmp
+*.temp
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE Files
+.vscode/
+.idea/
+*.sublime-*
+
+# Node Modules (if any)
+node_modules/
+
+# Backup Files
+*.bak
+*.backup
+*~
+
+# FiveM Specific
+fxmanifest.lua.bak

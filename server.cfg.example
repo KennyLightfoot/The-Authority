@@ -1,0 +1,104 @@
+# The Authority - FiveM QBX Server Configuration
+# Production-ready starter configuration
+
+# Server Information
+sv_hostname "The Authority RP | QBX Framework"
+sv_maxclients 32
+sv_licenseKey "YOUR_FIVEM_LICENSE_KEY_HERE"
+# sv_master1 ""  # Commented out to make server public
+steam_webApiKey "YOUR_STEAM_WEB_API_KEY_HERE"
+
+# Make server discoverable
+sets sv_projectName "The Authority RP"
+sets sv_projectDesc "Professional QBX Roleplay Server | Jobs | Housing | Economy"
+
+# Network Configuration
+endpoint_add_tcp "0.0.0.0:30120"
+endpoint_add_udp "0.0.0.0:30120"
+
+# Database Configuration
+set mysql_connection_string "mysql://username:password@127.0.0.1/authority?charset=utf8mb4"
+
+# ox_inventory Configuration - Set framework to qbx for Qbox compatibility
+setr inventory:framework "qbx"
+
+# Discord Configuration
+setr discord_token "YOUR_DISCORD_BOT_TOKEN_HERE"
+setr discord_guild_id "YOUR_DISCORD_SERVER_ID_HERE"
+
+# ACE Permissions
+add_ace group.admin command allow
+add_ace group.admin command.quit deny
+add_ace group.moderator command allow
+add_ace group.moderator command.quit deny
+add_ace group.moderator command.stop deny
+add_ace group.moderator command.start deny
+add_ace group.moderator command.restart deny
+
+# Resource Ensures (DO NOT CHANGE ORDER)
+# ==== Core DB ====
+ensure oxmysql
+
+# ==== Libraries / Framework ====
+ensure ox_lib
+ensure qbx_core
+ensure ox_inventory
+ensure ox_target
+ensure PolyZone
+ensure pma-voice
+
+# ==== World QoL ====
+ensure Renewed-Banking
+
+# ==== Onboarding ====
+ensure illenium-appearance
+ensure apartments
+
+# ==== Vehicles ====
+ensure qbx_vehicles
+ensure qbx_vehiclekeys
+ensure qbx_garages
+
+# ==== Jobs (civilian) ====
+# ensure qb-garbagejob  # Disabled: incompatible with qbx_core (needs QB-Core's GetCoreObject)
+ensure qb-delivery
+
+# ==== Admin & Discord ====
+ensure Badger_Discord_API
+ensure discord_perms
+ensure EasyAdmin
+
+# ==== Local Helpers & QA ====
+ensure db_migrator
+ensure core
+ensure job_patches
+ensure qa_tools
+
+# ==== Phone (optional; leave disabled at first) ====
+# ensure npwd
+
+# Server Settings
+sv_enforceGameBuild 2944
+sets tags "qbx,roleplay,economy,jobs"
+sets locale "en-US"
+sets banner_detail "https://example.com/banner.png"
+sets banner_connecting "https://example.com/connecting.png"
+
+# OneSync Settings
+set onesync on
+set onesync_enableInfinity 1
+set onesync_enableBeyond 1
+set onesync_population 0
+
+# Performance Settings
+set sv_filterRequestControl 4
+set sv_enableNetworkedSounds false
+set sv_enableNetworkedPhoneExplosions false
+
+# Disable problematic features
+set sv_listingIpOverride ""
+set sv_forceIndirectListing true
+
+# Logging
+set sv_logLevel 1
+set sv_log 1
