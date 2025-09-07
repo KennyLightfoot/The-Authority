@@ -15,7 +15,9 @@ $required = @(
     'resources/[ox]/ox_lib'
 )
 $missing = @()
-foreach ($r in $required) { if (-not (Test-Path $r)) { $missing += $r } }
+foreach ($r in $required) {
+    if (-not (Test-Path -LiteralPath $r)) { $missing += $r }
+}
 if ($missing.Count -gt 0) {
     Write-Host "Missing resources:" -ForegroundColor Red
     $missing | ForEach-Object { Write-Host " - $_" -ForegroundColor Red }
