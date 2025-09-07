@@ -1,0 +1,16 @@
+[
+  {
+    "$schema": 1,
+    "name": "Kenkarot",
+    "master": true,
+    "password_hash": "$2a$11$BH3AriVsEXvwE83LdqgyYuQRXfPH7Zjj1m155QPbMI1DeX5HF7RLa",
+    "providers": {
+      "discord": {
+        "id": "436615211256905728",
+        "identifier": "discord:436615211256905728",
+        "data": {}
+      }
+    },
+    "permissions": []
+  }
+]

@@ -2,5 +2,15 @@
   "version": 2,
   "general": {
     "serverName": "Authority Dev"
+  },
+  "server": {
+    "dataPath": "C:/Users/kenny/OneDrive/Desktop/GTA server rp/"
+  },
+  "discordBot": {
+    "enabled": true,
+    "token": "changeme",
+    "guild": "000000000000",
+    "embedJson": "{\"title\":\"The Authority RP | QBX Framework\",\"url\":\"{{serverBrowserUrl}}\",\"description\":\"Professional FiveM roleplay server with jobs, housing, and economy. Join our community!\",\"fields\":[{\"name\":\"> STATUS\",\"value\":\"```\\n{{statusString}}\\n```\",\"inline\":true},{\"name\":\"> PLAYERS\",\"value\":\"```\\n{{serverClients}}/{{serverMaxClients}}\\n```\",\"inline\":true},{\"name\":\"> F8 CONNECT COMMAND\",\"value\":\"```\\nconnect YOUR_SERVER_IP:30120\\n```\"},{\"name\":\"> NEXT RESTART\",\"value\":\"```\\n{{nextScheduledRestart}}\\n```\",\"inline\":true},{\"name\":\"> UPTIME\",\"value\":\"```\\n{{uptime}}\\n```\",\"inline\":true},{\"name\":\"> FRAMEWORK\",\"value\":\"```\\nQBX Framework\\n```\",\"inline\":true}],\"image\":{\"url\":\"https://forum-cfx-re.akamaized.net/original/5X/e/e/c/b/eecb4664ee03d39e34fcd82a075a18c24add91ed.png\"},\"thumbnail\":{\"url\":\"https://forum-cfx-re.akamaized.net/original/5X/9/b/d/7/9bd744dc2b21804e18c3bb331e8902c930624e44.png\"}}",
+    "embedConfigJson": "{\"onlineString\":\"🟢 Online\",\"onlineColor\":\"#0BA70B\",\"partialString\":\"🟡 Partial\",\"partialColor\":\"#FFF100\",\"offlineString\":\"�� Offline\",\"offlineColor\":\"#A70B28\",\"buttons\":[{\"emoji\":\"🎮\",\"label\":\"Connect to Server\",\"url\":\"{{serverJoinUrl}}\"},{\"emoji\":\"📋\",\"label\":\"Server Rules\",\"url\":\"https://discord.gg/YOUR_DISCORD_INVITE\"},{\"emoji\":\"💬\",\"label\":\"Community Discord\",\"url\":\"https://discord.gg/YOUR_DISCORD_INVITE\"}]}"
   }
 }

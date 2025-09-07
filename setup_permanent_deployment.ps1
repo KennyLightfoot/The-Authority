@@ -20,17 +20,17 @@ if ($latestProfile) {
 # Basic server settings
 set sv_hostname "The Authority RP Server"
 set sv_maxclients 32
-set sv_licenseKey "cfxk_1MYEfKBZUmFiat4mhBwMn_4Y3kaA"
+set sv_licenseKey "CHANGE_ME"
 
 # Database connection
-set mysql_connection_string "mysql://fivem:Kifelife420$@127.0.0.1/authority?charset=utf8mb4"
+set mysql_connection_string "mysql://fivem:CHANGE_ME@127.0.0.1/authority?charset=utf8mb4"
 
 # Steam API
-steam_webApiKey "FB97461A9B833C9840701921331096FC"
+steam_webApiKey ""
 
 # Discord Bot
-setr discord_token "MTQxMzUxNzM3MzE3NjAyMTA0NA.GDSvZN.nbg5iv9ZZ3BByGEijo8dj39QXNtypx05nMzbGU"
-setr discord_guild_id "1413514434915340291"
+setr discord_token "changeme"
+setr discord_guild_id "000000000000"
 
 # txAdmin settings
 set txAdmin-menuEnabled "true"
@@ -85,7 +85,7 @@ echo.
 
 cd /d "%~dp0"
 cd server
-FXServer.exe +set sv_licenseKey "cfxk_1MYEfKBZUmFiat4mhBwMn_4Y3kaA" +exec ../server_permanent.cfg
+FXServer.exe +set sv_licenseKey "CHANGE_ME" +exec ../server_permanent.cfg
 
 pause
 "@
