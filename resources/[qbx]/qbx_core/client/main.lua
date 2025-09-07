@@ -60,16 +60,28 @@ local mapText = require 'config.client'.pauseMapText
 if mapText == '' or type(mapText) ~= 'string' then mapText = 'FiveM' end
 AddTextEntry('FE_THDR_GTAO', mapText)
 
+local missingGameNameWarned = {}
+
 CreateThread(function()
     for _, v in pairs(GetVehiclesByName()) do
         if v.model and v.name then
+            -- Skip vehicles that are not present in the game data to avoid warnings
+            if not IsModelInCdimage(joaat(v.model)) then
+                goto continue
+            end
             local gameName = GetDisplayNameFromVehicleModel(v.model)
             if gameName and gameName ~= 'CARNOTFOUND' then
                 AddTextEntryByHash(joaat(gameName), v.name)
             else
-                lib.print.warn(('Could not find gameName value in vehicles.meta for vehicle model %s'):format(v.model))
+                -- Fallback: map the model hash to the friendly name to avoid missing labels
+                AddTextEntryByHash(joaat(v.model), v.name)
+                if not missingGameNameWarned[v.model] then
+                    lib.print.warn(('Could not find gameName value in vehicles.meta for vehicle model %s; applied model-hash fallback'):format(v.model))
+                    missingGameNameWarned[v.model] = true
+                end
             end
         end
+        ::continue::
     end
 end)
 

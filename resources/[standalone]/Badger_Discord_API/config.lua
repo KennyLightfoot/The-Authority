@@ -1,10 +1,10 @@
 Config = {
-	Guild_ID = '1413514434915340291', -- Set to the ID of your guild (or your Primary guild if using Multiguild)
+	Guild_ID = GetConvar('discord_guild_id', '000000000000'), -- Set to the ID of your guild (or your Primary guild if using Multiguild)
 	Multiguild = false, -- Set to true if you want to use multiple guilds
 	Guilds = {
-		["main"] = "1413514434915340291", -- Replace this with a name, like "main"
+		["main"] = GetConvar('discord_guild_id', '000000000000'), -- Replace this with a name, like "main"
 	},
-	Bot_Token = 'MTQxMzUxNzM3MzE3NjAyMTA0NA.GcEBom.UnSyxMsl2lHjEejW00xoUQcHVT_yi3qR7hqvyc',
+	Bot_Token = GetConvar('discord_token', 'changeme'),
 	RoleList = {},
 	DebugScript = false,
 	CacheDiscordRoles = true, -- true to cache player roles, false to make a new Discord Request every time
