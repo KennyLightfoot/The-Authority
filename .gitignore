@@ -2,6 +2,9 @@
 cache/
 db/
 server/
+# allow core server scripts
+!resources/\[local\]/core/server/
+!resources/\[local\]/core/server/*
 *.log
 *.db
 
