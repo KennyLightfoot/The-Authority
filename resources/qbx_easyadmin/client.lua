@@ -275,6 +275,25 @@ RegisterCommand('easyadmin_qbx_playerinfo', function(_, args) getPlayerInfo(args
 RegisterCommand('easyadmin_qbx_heal', function(_, args) healPlayer(args[1]) end, true)
 RegisterCommand('easyadmin_qbx_revive', function(_, args) revivePlayer(args[1]) end, true)
 
+-- Quick Heal/Revive Hotkeys
+RegisterCommand('qbx_quick_heal', function()
+	local targetId = getAimedServerId()
+	if targetId then
+		healPlayer(targetId)
+	else
+		showNotification('Aim at a player first to heal them.', 'error')
+	end
+end, true)
+
+RegisterCommand('qbx_quick_revive', function()
+	local targetId = getAimedServerId()
+	if targetId then
+		revivePlayer(targetId)
+	else
+		showNotification('Aim at a player first to revive them.', 'error')
+	end
+end, true)
+
 -- ===== Context Menu (Optional UX Enhancement) =====
 local function showTargetMenu(targetId)
 	targetId = ensureTargetId(targetId)
@@ -420,7 +439,8 @@ AddEventHandler('onResourceStop', function(res)
 		'easyadmin_qbx_givemoney','easyadmin_qbx_removemoney','easyadmin_qbx_setmoney',
 		'easyadmin_qbx_setjob','easyadmin_qbx_setjobgrade','easyadmin_qbx_toggleduty',
 		'easyadmin_qbx_setgang','easyadmin_qbx_setganggrade','easyadmin_qbx_heal','easyadmin_qbx_revive',
-		'easyadmin_qbx_playerinfo','easyadmin_qbx_menu','easyadmin_qbx_menu_aim'
+		'easyadmin_qbx_playerinfo','easyadmin_qbx_menu','easyadmin_qbx_menu_aim',
+		'qbx_quick_heal','qbx_quick_revive'
 	}) do
 		TriggerEvent('chat:removeSuggestion', '/'..cmd)
 	end
@@ -440,6 +460,10 @@ RegisterKeyMapping('easyadmin_qbx_revive',       'QBX: Revive Player', 'keyboard
 RegisterKeyMapping('easyadmin_qbx_playerinfo',   'QBX: Player Info',   'keyboard', '')
 RegisterKeyMapping('easyadmin_qbx_menu',         'QBX: Admin Menu',    'keyboard', '')
 RegisterKeyMapping('easyadmin_qbx_menu_aim',     'QBX: Admin Menu (Aim)', 'keyboard', '')
+
+-- Quick Heal/Revive Hotkeys
+RegisterKeyMapping('qbx_quick_heal',    'QBX: Quick Heal (Aimed Player)',    'keyboard', 'F6')
+RegisterKeyMapping('qbx_quick_revive',  'QBX: Quick Revive (Aimed Player)',  'keyboard', 'F7')
 
 -- Exports
 exports('giveMoney', giveMoney)
