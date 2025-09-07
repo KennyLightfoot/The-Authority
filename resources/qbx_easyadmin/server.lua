@@ -732,4 +732,58 @@ AddEventHandler('EasyAdmin:QBX:GetPlayerInfo', function(targetId)
 	print(("[QBX Admin] %s requested info for %s (%s)"):format(adminName, info.name, tostring(playerData.citizenid)))
 end)
 
+-- Heal player
+RegisterNetEvent('EasyAdmin:QBX:Heal', function(targetId)
+	local src = source
+	if not hasPerm(src, "easyadmin.qbx.health") then
+		notifyAdmin(src, "You don't have permission to heal", "error")
+		return
+	end
+	if not canProceed(src) then
+		notifyAdmin(src, "Slow down a sec (rate limited).", "error")
+		return
+	end
+	if not validPlayer(targetId) then
+		notifyAdmin(src, "Player not found", "error")
+		return
+	end
+	TriggerClientEvent('EasyAdmin:QBX:Client:Heal', targetId)
+
+	local adminName  = GetPlayerName(src) or ('['..tostring(src)..']')
+	local targetName = GetPlayerName(targetId) or ('['..tostring(targetId)..']')
+	notifyAdmin(src, ("Healed %s"):format(targetName), "success")
+	print(("[QBX Admin] %s healed %s"):format(adminName, targetName))
+	sendAudit("Heal", ("**Admin:** %s %s\n**Target:** %s %s"):format(
+		adminName, idLine(src), targetName, idLine(targetId)), 3066993, 'job')
+end)
+
+-- Revive player
+RegisterNetEvent('EasyAdmin:QBX:Revive', function(targetId)
+	local src = source
+	if not hasPerm(src, "easyadmin.qbx.revive") then
+		notifyAdmin(src, "You don't have permission to revive", "error")
+		return
+	end
+	if not canProceed(src) then
+		notifyAdmin(src, "Slow down a sec (rate limited).", "error")
+		return
+	end
+	if not validPlayer(targetId) then
+		notifyAdmin(src, "Player not found", "error")
+		return
+	end
+
+	-- If you use a medical script, call its revive instead of the generic one:
+	-- TriggerClientEvent('hospital:client:Revive', targetId)          -- qb-ambulancejob (old)
+	-- TriggerClientEvent('qbx_ambulancejob:client:revive', targetId)  -- new/qbx variant (adjust to your resource)
+	TriggerClientEvent('EasyAdmin:QBX:Client:Revive', targetId)
+
+	local adminName  = GetPlayerName(src) or ('['..tostring(src)..']')
+	local targetName = GetPlayerName(targetId) or ('['..tostring(targetId)..']')
+	notifyAdmin(src, ("Revived %s"):format(targetName), "success")
+	print(("[QBX Admin] %s revived %s"):format(adminName, targetName))
+	sendAudit("Revive", ("**Admin:** %s %s\n**Target:** %s %s"):format(
+		adminName, idLine(src), targetName, idLine(targetId)), 3447003, 'job')
+end)
+
 
