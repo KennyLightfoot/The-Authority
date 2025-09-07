@@ -1,0 +1,200 @@
+# The Authority - FiveM QBX Server Configuration
+# Production-ready starter configuration
+
+# Server Information
+sv_hostname "The Authority RP | QBX Framework"
+sv_maxclients 32
+# Load secrets (license key, API keys, DB, Discord)
+exec config/secrets.cfg
+# sv_master1 ""  # Commented out to make server public
+
+# Make server discoverable
+sets sv_projectName "The Authority RP"
+sets sv_projectDesc "Professional QBX Roleplay Server | Jobs | Housing | Economy"
+
+# Network Configuration
+endpoint_add_tcp "0.0.0.0:30120"
+endpoint_add_udp "0.0.0.0:30120"
+
+# txAdmin Configuration
+set txAdmin-menuEnabled "true"
+set txAdmin-menuDefaultKey "F10"
+set txAdmin-verbose "true"
+# The following luaCom settings are injected by txAdmin at runtime.
+# Do NOT set them here or heartbeats will fail.
+# set txAdmin-luaComHost "127.0.0.1"
+# set txAdmin-luaComToken "CHANGE_ME"
+# set txAdmin-luaComPort "40120"
+
+# Database Configuration (moved to config/secrets.cfg)
+
+# ox_inventory Configuration - Set framework to qbx for Qbox compatibility
+setr inventory:framework "qbx"
+
+# Discord Configuration (moved to config/secrets.cfg)
+# QBX Admin Discord Webhooks for audit logging
+set qbx_admin_webhook "https://discordapp.com/api/webhooks/1414269263606317196/e5DkrmV553Tl45SOcY8Of977dnQw3_g2Z0nvchbbJqsFtV7c4SU_PFDtN6N00IcSaU7C"
+# Optional: Separate webhooks per action type
+# set qbx_admin_webhook_money "https://discord.com/api/webhooks/XXXXXXXX/money-webhook"
+# set qbx_admin_webhook_job "https://discord.com/api/webhooks/XXXXXXXX/job-webhook"
+# set qbx_admin_webhook_gang "https://discord.com/api/webhooks/XXXXXXXX/gang-webhook"
+
+# QBX Settings
+set qbx:acknowledge true
+
+# ACE Permissions
+add_ace group.owner command allow
+add_ace group.admin command.quit deny
+add_ace group.admin command.stop deny
+add_ace group.admin command.start deny
+add_ace group.admin command.restart deny
+
+# Moderator: EasyAdmin via per-identifier permissions from discord_perms; no blanket command access
+add_ace group.moderator command.quit deny
+add_ace group.moderator command.stop deny
+add_ace group.moderator command.start deny
+add_ace group.moderator command.restart deny
+
+# Remove EasyAdmin/discord_perms integration
+
+# Allow in-game use of refreshperms for owner/admin
+add_ace group.owner command.refreshperms allow
+add_ace group.admin command.refreshperms allow
+
+# QA item/weapon commands (admin-only)
+add_ace group.owner command.qa:item allow
+add_ace group.admin command.qa:item allow
+add_ace group.owner command.qa:weapon allow
+add_ace group.admin command.qa:weapon allow
+
+# Allow QA identifier helper for owner/admin
+add_ace group.owner command.qa:ident allow
+add_ace group.admin command.qa:ident allow
+
+# Admin Assignments - Add your identifiers here
+# Replace with your actual identifiers (license/discord/steam)
+# Example admin (discord) and owner (license):
+add_principal identifier.discord:436615211256905728 group.admin
+# add_principal identifier.steam:1100001XXXXXXXX group.admin
+add_principal identifier.license:572a937f7f8f0d185fef3535d9fe676a11dc7a3c group.owner
+
+# Resource Ensures (DO NOT CHANGE ORDER)
+# ==== Core DB ====
+ensure oxmysql
+
+# ==== Libraries / Framework ====
+ensure ox_lib
+ensure qbx_core
+ensure ox_inventory
+ensure ox_target
+ensure PolyZone
+ensure pma-voice
+
+# ==== Base Chat ====
+ensure yarn
+ensure webpack
+ensure chat
+ensure chat-theme-gtao
+
+# ==== CFX Managers ====
+ensure sessionmanager
+ensure spawnmanager
+
+# ==== World QoL ====
+ensure Renewed-Banking
+
+# ==== Onboarding ====
+ensure illenium-appearance
+ensure apartments
+
+# ==== Vehicles ====
+ensure qbx_vehicles
+ensure qbx_vehiclekeys
+ensure qbx_garages
+
+# ==== Jobs (civilian) ====
+# ensure qb-garbagejob  # Disabled: incompatible with qbx_core (needs QB-Core's GetCoreObject)
+ensure qb-delivery
+
+# ==== Admin ====
+# txAdmin-first admin actions only
+ensure qbx_admin
+
+# ==== Local Helpers & QA ====
+ensure db_migrator
+ensure core
+ensure job_patches
+ensure qa_tools
+ensure ea_keybind
+
+# ==== Phone (optional; leave disabled at first) ====
+# ensure npwd
+
+# ==== Telemetry / Audit ====
+ensure telemetry
+
+# Server Settings
+sv_enforceGameBuild 2944
+sets tags "qbx,roleplay,economy,jobs"
+sets locale "en-US"
+sets banner_detail "https://example.com/banner.png"
+sets banner_connecting "https://example.com/connecting.png"
+
+# OneSync Settings
+## [txAdmin CFG validator]: onesync MUST only be set in the txAdmin settings page.
+# set onesync on
+set onesync_enableInfinity 1
+set onesync_enableBeyond 1
+set onesync_population 1
+
+# Performance Settings
+set sv_filterRequestControl 4
+set sv_enableNetworkedSounds false
+set sv_enableNetworkedPhoneExplosions false
+
+# Disable problematic features
+set sv_listingIpOverride ""
+set sv_forceIndirectListing true
+
+# Logging
+set sv_logLevel 1
+set sv_log 1
+
+# EasyAdmin removed
+
+# QBX Admin Integration Permissions
+# Server-side permissions for QBX admin actions
+# add_ace group.admin easyadmin.qbx.money allow
+# add_ace group.admin easyadmin.qbx.job allow
+# add_ace group.admin easyadmin.qbx.gang allow
+# add_ace group.admin easyadmin.qbx.info allow
+# add_ace group.admin easyadmin.qbx.heal allow
+# add_ace group.admin easyadmin.qbx.revive allow
+
+# QBX Admin (txAdmin-first) ACE permissions
+add_ace group.admin qbxadmin.money allow
+add_ace group.admin qbxadmin.job allow
+add_ace group.admin qbxadmin.gang allow
+add_ace group.admin qbxadmin.info allow
+add_ace group.admin qbxadmin.heal allow
+add_ace group.admin qbxadmin.revive allow
+add_ace group.owner qbxadmin.bypassratelimit allow
+
+# Client-side command permissions examples (EasyAdmin aliases removed)
+
+# Enable QBX Admin commands in production mode (EasyAdmin) - allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_heal allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_revive allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_givemoney allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_removemoney allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_setmoney allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_setjob allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_setjobgrade allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_toggleduty allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_setgang allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_setganggrade allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_playerinfo allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_menu allow
+# add_ace resource.qbx_easyadmin command.easyadmin_qbx_menu_aim allow
+# add_ace resource.qbx_easyadmin command.qbx_quick_heal allow
+# add_ace resource.qbx_easyadmin command.qbx_quick_revive allow
