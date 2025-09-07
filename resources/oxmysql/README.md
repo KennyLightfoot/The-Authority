@@ -33,3 +33,4 @@ https://www.npmjs.com/package/@overextended/oxmysql
 - Install [Lua Language Server](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) to ease development with annotations, type checking, diagnostics, and more.
 - See [ox_types](https://github.com/overextended/ox_types) for our Lua type definitions.
 
+

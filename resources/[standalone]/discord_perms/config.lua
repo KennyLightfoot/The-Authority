@@ -72,13 +72,7 @@ Config.Permissions = {
         -- QA Tools
         'qa.base',
         'qa.test',
-        'qa.debug',
-        
-        -- QBX Integration
-        'easyadmin.qbx.money',
-        'easyadmin.qbx.job',
-        'easyadmin.qbx.gang',
-        'easyadmin.qbx.info'
+        'qa.debug'
     },
     admin = {
         -- Player Management
@@ -123,13 +117,7 @@ Config.Permissions = {
         
         -- QA Tools
         'qa.base',
-        'qa.test',
-        
-        -- QBX Integration
-        'easyadmin.qbx.money',
-        'easyadmin.qbx.job',
-        'easyadmin.qbx.gang',
-        'easyadmin.qbx.info'
+        'qa.test'
     },
     moderator = {
         -- Basic Player Management
@@ -152,10 +140,7 @@ Config.Permissions = {
         'easyadmin.flipvehicle',
         
         -- QA Tools
-        'qa.base',
-        
-        -- QBX Integration (Limited)
-        'easyadmin.qbx.info'
+        'qa.base'
     },
     helper = {
         -- Support Tools
