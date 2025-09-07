@@ -190,6 +190,19 @@ local function getPlayerInfo(targetId)
 	TriggerServerEvent('EasyAdmin:QBX:GetPlayerInfo', targetId)
 end
 
+-- ===== Health Management =====
+local function healPlayer(targetId)
+	if not canActNow() then return showNotification("Slow down a sec (rate limited).", "error") end
+	targetId = ensureTargetId(targetId); if not targetId then return end
+	TriggerServerEvent('EasyAdmin:QBX:Heal', targetId)
+end
+
+local function revivePlayer(targetId)
+	if not canActNow() then return showNotification("Slow down a sec (rate limited).", "error") end
+	targetId = ensureTargetId(targetId); if not targetId then return end
+	TriggerServerEvent('EasyAdmin:QBX:Revive', targetId)
+end
+
 -- Receive player info
 RegisterNetEvent('EasyAdmin:QBX:ReceivePlayerInfo', function(info)
 	if hasLib() and lib.alertDialog then
@@ -222,6 +235,29 @@ RegisterNetEvent('EasyAdmin:QBX:ReceivePlayerInfo', function(info)
 	end
 end)
 
+-- CLIENT effects
+RegisterNetEvent('EasyAdmin:QBX:Client:Heal', function()
+	local ped = PlayerPedId()
+	SetEntityHealth(ped, GetEntityMaxHealth(ped))
+	ClearPedBloodDamage(ped)
+	ResetPedVisibleDamage(ped)
+	ClearPedWetness(ped)
+	SetPedArmour(ped, 100) -- optional
+	showNotification('You have been healed.', 'success')
+end)
+
+RegisterNetEvent('EasyAdmin:QBX:Client:Revive', function()
+	local ped = PlayerPedId()
+	local coords = GetEntityCoords(ped)
+	local heading = GetEntityHeading(ped)
+	NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, heading, true, false)
+	ClearPedBloodDamage(ped)
+	SetEntityHealth(ped, GetEntityMaxHealth(ped))
+	SetPedArmour(ped, 0) -- or keep armour; your choice
+	ClearPedTasksImmediately(ped)
+	showNotification('You have been revived.', 'success')
+end)
+
 -- ===== EasyAdmin integration =====
 RegisterCommand('easyadmin_qbx_givemoney', function(_, args) giveMoney(args[1]) end, true)
 RegisterCommand('easyadmin_qbx_removemoney', function(_, args) removeMoney(args[1]) end, true)
@@ -235,6 +271,9 @@ RegisterCommand('easyadmin_qbx_setgang', function(_, args) setGang(args[1]) end,
 RegisterCommand('easyadmin_qbx_setganggrade', function(_, args) setGangGrade(args[1]) end, true)
 
 RegisterCommand('easyadmin_qbx_playerinfo', function(_, args) getPlayerInfo(args[1]) end, true)
+
+RegisterCommand('easyadmin_qbx_heal', function(_, args) healPlayer(args[1]) end, true)
+RegisterCommand('easyadmin_qbx_revive', function(_, args) revivePlayer(args[1]) end, true)
 
 -- ===== Context Menu (Optional UX Enhancement) =====
 local function showTargetMenu(targetId)
@@ -270,6 +309,18 @@ local function showTargetMenu(targetId)
 				description = 'Set gang or gang grade',
 				icon = 'users',
 				menu = 'qbx_gang_menu'
+			},
+			{
+				title = '❤️ Heal',
+				description = 'Restore health/armor',
+				icon = 'heart',
+				onSelect = function() healPlayer(targetId) end
+			},
+			{
+				title = '🫀 Revive',
+				description = 'Bring back from downed state',
+				icon = 'activity',
+				onSelect = function() revivePlayer(targetId) end
 			},
 			{
 				title = 'ℹ️ Player Info',
@@ -356,6 +407,8 @@ if GetResourceState('chat') == 'started' then
 	TriggerEvent('chat:addSuggestion', '/easyadmin_qbx_toggleduty', 'Toggle a player\'s duty status', { { name = 'serverId', help = 'Target player server ID (optional; prompts if omitted)' } })
 	TriggerEvent('chat:addSuggestion', '/easyadmin_qbx_setgang', 'Set a player\'s gang', { { name = 'serverId', help = 'Target player server ID (optional; prompts if omitted)' } })
 	TriggerEvent('chat:addSuggestion', '/easyadmin_qbx_setganggrade', 'Set a player\'s gang grade', { { name = 'serverId', help = 'Target player server ID (optional; prompts if omitted)' } })
+	TriggerEvent('chat:addSuggestion', '/easyadmin_qbx_heal', 'Heal a player', { { name = 'serverId', help = 'Target player server ID (optional; prompts if omitted)' } })
+	TriggerEvent('chat:addSuggestion', '/easyadmin_qbx_revive', 'Revive a player', { { name = 'serverId', help = 'Target player server ID (optional; prompts if omitted)' } })
 	TriggerEvent('chat:addSuggestion', '/easyadmin_qbx_playerinfo', 'View detailed player information', { { name = 'serverId', help = 'Target player server ID (optional; prompts if omitted)' } })
 	TriggerEvent('chat:addSuggestion', '/easyadmin_qbx_menu', 'Open admin context menu for a player', { { name = 'serverId', help = 'Target player server ID (optional; prompts if omitted)' } })
 	TriggerEvent('chat:addSuggestion', '/easyadmin_qbx_menu_aim', 'Open admin context menu for aimed-at player', { { name = '', help = 'Aim at a player and use this command' } })
@@ -366,8 +419,8 @@ AddEventHandler('onResourceStop', function(res)
 	for _, cmd in ipairs({
 		'easyadmin_qbx_givemoney','easyadmin_qbx_removemoney','easyadmin_qbx_setmoney',
 		'easyadmin_qbx_setjob','easyadmin_qbx_setjobgrade','easyadmin_qbx_toggleduty',
-		'easyadmin_qbx_setgang','easyadmin_qbx_setganggrade','easyadmin_qbx_playerinfo',
-		'easyadmin_qbx_menu','easyadmin_qbx_menu_aim'
+		'easyadmin_qbx_setgang','easyadmin_qbx_setganggrade','easyadmin_qbx_heal','easyadmin_qbx_revive',
+		'easyadmin_qbx_playerinfo','easyadmin_qbx_menu','easyadmin_qbx_menu_aim'
 	}) do
 		TriggerEvent('chat:removeSuggestion', '/'..cmd)
 	end
@@ -382,6 +435,8 @@ RegisterKeyMapping('easyadmin_qbx_setjobgrade',  'QBX: Set Job Grade', 'keyboard
 RegisterKeyMapping('easyadmin_qbx_toggleduty',   'QBX: Toggle Duty',   'keyboard', '')
 RegisterKeyMapping('easyadmin_qbx_setgang',      'QBX: Set Gang',      'keyboard', '')
 RegisterKeyMapping('easyadmin_qbx_setganggrade', 'QBX: Set Gang Grade','keyboard', '')
+RegisterKeyMapping('easyadmin_qbx_heal',         'QBX: Heal Player',   'keyboard', '')
+RegisterKeyMapping('easyadmin_qbx_revive',       'QBX: Revive Player', 'keyboard', '')
 RegisterKeyMapping('easyadmin_qbx_playerinfo',   'QBX: Player Info',   'keyboard', '')
 RegisterKeyMapping('easyadmin_qbx_menu',         'QBX: Admin Menu',    'keyboard', '')
 RegisterKeyMapping('easyadmin_qbx_menu_aim',     'QBX: Admin Menu (Aim)', 'keyboard', '')
@@ -395,6 +450,8 @@ exports('setJobGrade', setJobGrade)
 exports('toggleDuty', toggleDuty)
 exports('setGang', setGang)
 exports('setGangGrade', setGangGrade)
+exports('healPlayer', healPlayer)
+exports('revivePlayer', revivePlayer)
 exports('getPlayerInfo', getPlayerInfo)
 exports('showTargetMenu', showTargetMenu)
 
