@@ -266,6 +266,8 @@ local function showMenu(targetId)
 end
 
 RegisterCommand('qbxadmin_menu', function(_, args) showMenu(args[1]) end, true)
+-- Alias: /adminmenu opens the same context UI
+RegisterCommand('adminmenu', function(_, args) showMenu(args[1]) end, true)
 
 -- Chat suggestions (if chat is running)
 if GetResourceState('chat') == 'started' then
@@ -282,6 +284,8 @@ end
 
 -- Keybinds (blank defaults; bind in Settings)
 RegisterKeyMapping('qbxadmin_menu', 'QBX: Admin Menu', 'keyboard', '')
+-- Bind F10 by default as requested in getting-started
+RegisterKeyMapping('adminmenu', 'QBX: Admin Menu (alias)', 'keyboard', 'F10')
 RegisterKeyMapping('qbxadmin_menu_aim', 'QBX: Admin Menu (Aim)', 'keyboard', '')
 RegisterKeyMapping('qbxadmin_heal', 'QBX: Heal (prompt target)', 'keyboard', '')
 RegisterKeyMapping('qbxadmin_revive', 'QBX: Revive (prompt target)', 'keyboard', '')
@@ -594,8 +598,8 @@ if GetResourceState('chat') == 'started' then
 		{cmd='qbxadmin_givemoney',help='Give money to a player'},
 		{cmd='qbxadmin_removemoney',help='Remove money from a player'},
 		{cmd='qbxadmin_setmoney',help='Set exact amount of money for a player'},
-		{cmd='qbxadmin_setjob',help='Set a player\'.."'"..'s job'},
-		{cmd='qbxadmin_setjobgrade',help='Set a player\'.."'"..'s job grade'},
+		{cmd='qbxadmin_setjob',help="Set a player's job"},
+		{cmd='qbxadmin_setjobgrade',help="Set a player's job grade"},
 		{cmd='qbxadmin_toggleduty',help='Toggle a player duty status'},
 		{cmd='qbxadmin_setgang',help='Set a player gang'},
 		{cmd='qbxadmin_setganggrade',help='Set a player gang grade'},

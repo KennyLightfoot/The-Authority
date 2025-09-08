@@ -120,12 +120,15 @@ ensure qb-delivery
 # txAdmin-first admin actions only
 ensure qbx_admin
 
+# ==== Discord Integration ====
+ensure Badger_Discord_API
+ensure discord_perms
+
 # ==== Local Helpers & QA ====
 ensure db_migrator
 ensure core
 ensure job_patches
 ensure qa_tools
-ensure ea_keybind
 
 # ==== Phone (optional; leave disabled at first) ====
 # ensure npwd
@@ -143,9 +146,6 @@ sets banner_connecting "https://example.com/connecting.png"
 # OneSync Settings
 ## [txAdmin CFG validator]: onesync MUST only be set in the txAdmin settings page.
 # set onesync on
-set onesync_enableInfinity 1
-set onesync_enableBeyond 1
-set onesync_population 1
 
 # Performance Settings
 set sv_filterRequestControl 4

@@ -1,10 +1,10 @@
 -- QBX Admin (txAdmin-first, EasyAdmin fallback) - Server
 
 local VALID_ACCOUNTS = { cash = true, bank = true }
-local MAX_MONEY_AMOUNT = 1000000
+local MAX_MONEY_AMOUNT = 50000
 local MAX_JOB_GRADE = 10
 local MAX_GANG_GRADE = 10
-local RATE_MS = 750
+local RATE_MS = 30000
 
 local lastAction = {}
 
