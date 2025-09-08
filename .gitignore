@@ -5,6 +5,9 @@ server/
 # allow core server scripts
 !resources/\[local\]/core/server/
 !resources/\[local\]/core/server/*
+# allow qbx_core server scripts
+!resources/\[qbx\]/qbx_core/server/
+!resources/\[qbx\]/qbx_core/server/*
 *.log
 *.db
 
