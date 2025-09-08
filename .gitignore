@@ -7,8 +7,8 @@ server/
 !resources/\[local\]/core/server/*
 !resources/\[qbx\]/qbx_core/server/
 !resources/\[qbx\]/qbx_core/server/*
-!resources/\[standalone\]/authority_season/server/
-!resources/\[standalone\]/authority_season/server/*
+!resources/\[qbx\]/qbx_core/bridge/qb/server/
+!resources/\[qbx\]/qbx_core/bridge/qb/server/*
 *.log
 *.db
 
