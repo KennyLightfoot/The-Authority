@@ -13,6 +13,8 @@ shared_scripts {
     'modules/lib.lua',
     'shared/locale.lua',
     'shared/functions.lua',
+    'shared/config.lua',
+    'shared/events.lua',
 }
 
 client_scripts {
@@ -25,6 +27,9 @@ client_scripts {
     'client/discord.lua',
     'client/vehicle-persistence.lua',
     'bridge/qb/client/main.lua',
+    'client/authority_hud.lua',
+    'client/heat_effects.lua',
+    'client/onboarding_ui.lua',
 }
 
 server_scripts {
@@ -40,6 +45,9 @@ server_scripts {
     'server/character.lua',
     'server/vehicle-persistence.lua',
     'bridge/qb/server/main.lua',
+    'server/authority_standing.lua',
+    'server/heat_system.lua',
+    'server/onboarding.lua',
 }
 
 files {
@@ -67,6 +75,9 @@ dependencies {
     '/onesync',
     'ox_lib',
     'oxmysql',
+    'ox_target',
+    'ox_inventory',
+    'pma-voice',
 }
 
 provide 'qb-core'
