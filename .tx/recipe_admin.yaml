@@ -1,0 +1,12 @@
+tasks:
+  - action: ensure_dir
+    dest: "resources/[admin]/qbx_admin"
+  - action: copy
+    src: "resources/[admin]/qbx_admin/"
+    dest: "resources/[admin]/qbx_admin"
+    overwrite: true
+  - action: append_file
+    file: "server.cfg"
+    text: |
+      set admin_webhook ""   # optional
+      ensure qbx_admin
