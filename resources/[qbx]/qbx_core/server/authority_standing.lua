@@ -1,0 +1,1 @@
+-- placeholder authority standing server script

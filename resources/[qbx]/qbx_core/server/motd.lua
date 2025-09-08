@@ -1,0 +1,1 @@
+-- placeholder motd server script
