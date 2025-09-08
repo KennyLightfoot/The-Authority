@@ -31,36 +31,11 @@ Config.MaxMoneyAmount = 1000000
 Config.MaxJobGrade    = 10
 Config.MaxGangGrade   = 10
 
--- Webhooks (set to "" to disable). You can override by category, else fallback to Default
+-- Discord webhooks (lowercase keys; leave empty to disable)
 Config.Webhooks = {
-    Default = GetConvar('qbx_admin_webhook', ''),
-    Money   = GetConvar('qbx_admin_webhook_money', ''),
-    Job     = GetConvar('qbx_admin_webhook_job',   ''),
-    Gang    = GetConvar('qbx_admin_webhook_gang',  ''),
+    default = GetConvar('qbx_admin_webhook', ''),
+    money   = GetConvar('qbx_admin_webhook_money', ''),
+    job     = GetConvar('qbx_admin_webhook_job',   ''),
+    gang    = GetConvar('qbx_admin_webhook_gang',  ''),
 }
-
-Config = Config or {}
-
--- If true, also register legacy EasyAdmin prefixes/aliases and permissions.
-Config.UseEasyAdmin = false
-
--- Permissions map (txAdmin-first; fallback to EasyAdmin/ACE)
-Config.Perms = {
-	money  = 'qbxadmin.money',
-	job    = 'qbxadmin.job',
-	gang   = 'qbxadmin.gang',
-	info   = 'qbxadmin.info',
-	heal   = 'qbxadmin.heal',
-	revive = 'qbxadmin.revive',
-	bypass = 'qbxadmin.bypassratelimit',
-}
-
--- Discord webhooks (or leave empty to disable)
-Config.Webhooks = {
-	default = GetConvar('qbx_admin_webhook', ''),
-	money   = GetConvar('qbx_admin_webhook_money', ''),
-	job     = GetConvar('qbx_admin_webhook_job',   ''),
-	gang    = GetConvar('qbx_admin_webhook_gang',  ''),
-}
-
 
