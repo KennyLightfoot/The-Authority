@@ -39,3 +39,10 @@ Config.Webhooks = {
     gang    = GetConvar('qbx_admin_webhook_gang',  ''),
 }
 
+-- Items allowed to be given using the admin menu
+Config.Whitelists = Config.Whitelists or {}
+Config.Whitelists.Items = {
+    ['weapon_pistol'] = true,
+    ['weapon_smg'] = true,
+}
+
