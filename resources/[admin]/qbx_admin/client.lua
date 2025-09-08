@@ -234,13 +234,7 @@ local function aimedServerId()
     if hit == 1 and IsPedAPlayer(entity) then return GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)) end
 end
 
-RegisterCommand('qbxadmin_menu_aim', function()
-    local sid = aimedServerId()
-    if not sid then return notify('Aim at a player first.', 'error') end
-    ExecuteCommand(('qbxadmin_menu %d'):format(sid))
-end, true)
-
-local function showMenu(targetId)
+local function openPlayerActions(targetId)
     targetId = ensureTargetId(targetId); if not targetId then return end
     if not hasLib() or not lib.registerContext then return notify('ox_lib context menu not available.', 'error') end
     local idx = GetPlayerFromServerId(targetId)
@@ -265,9 +259,54 @@ local function showMenu(targetId)
     lib.showContext('qbx_admin_menu')
 end
 
-RegisterCommand('qbxadmin_menu', function(_, args) showMenu(args[1]) end, true)
+local function openPlayersMenu()
+    if not hasLib() or not lib.registerContext then
+        return notify('ox_lib context menu not available.', 'error')
+    end
+    local selfId = GetPlayerServerId(PlayerId())
+    local options = {
+        { title=('Self - %s (ID: %d)'):format(GetPlayerName(PlayerId()), selfId), icon='user', onSelect=function()
+            openPlayerActions(selfId)
+        end }
+    }
+    for _, idx in ipairs(GetActivePlayers()) do
+        local sid = GetPlayerServerId(idx)
+        if sid ~= selfId then
+            options[#options+1] = {
+                title = ('%s (ID: %d)'):format(GetPlayerName(idx), sid),
+                icon = 'user',
+                onSelect = function() openPlayerActions(sid) end
+            }
+        end
+    end
+    lib.registerContext({ id='qbx_admin_players', title='Players', options=options })
+    lib.showContext('qbx_admin_players')
+end
+
+RegisterCommand('qbxadmin_menu', function(_, args)
+    if args[1] then
+        openPlayerActions(args[1])
+    else
+        openPlayersMenu()
+    end
+end, true)
 -- Alias: /adminmenu opens the same context UI
-RegisterCommand('adminmenu', function(_, args) showMenu(args[1]) end, true)
+RegisterCommand('adminmenu', function(_, args)
+    if args[1] then
+        openPlayerActions(args[1])
+    else
+        openPlayersMenu()
+    end
+end, true)
+
+RegisterCommand('qbxadmin_menu_aim', function()
+    local sid = aimedServerId()
+    if sid then
+        openPlayerActions(sid)
+    else
+        notify('Aim at a player first.', 'error')
+    end
+end, true)
 
 -- Chat suggestions (if chat is running)
 if GetResourceState('chat') == 'started' then
@@ -554,42 +593,76 @@ RegisterCommand('qbx_quick_revive', function()
 	if targetId then revivePlayer(targetId) else showNotification('Aim at a player first to revive them.', 'error') end
 end, true)
 
--- Context menu
-local function showTargetMenu(targetId)
-	targetId = ensureTargetId(targetId)
-	if not targetId then return end
-	if not hasLib() or not lib.registerContext then return showNotification('ox_lib context menu not available.', 'error') end
-	local idx = getPlayerIndexFromServerId(targetId)
-	local playerName = (idx ~= -1 and GetPlayerName(idx)) or 'Unknown'
-	lib.registerContext({ id='qbx_admin_menu', title=('Admin Actions - %s (ID: %d)'):format(playerName, targetId), options={
-		{ title='💰 Money Management', description='Give, remove, or set money', icon='dollar-sign', menu='qbx_money_menu' },
-		{ title='💼 Job Management', description='Set job, grade, or toggle duty', icon='briefcase', menu='qbx_job_menu' },
-		{ title='🔫 Gang Management', description='Set gang or gang grade', icon='users', menu='qbx_gang_menu' },
-		{ title='❤️ Heal', description='Restore health/armor', icon='heart', onSelect=function() healPlayer(targetId) end },
-		{ title='🫀 Revive', description='Bring back from downed state', icon='activity', onSelect=function() revivePlayer(targetId) end },
-		{ title='ℹ️ Player Info', description='View detailed player information', icon='info', onSelect=function() getPlayerInfo(targetId) end },
-	}})
-	lib.registerContext({ id='qbx_money_menu', title='Money Management', menu='qbx_admin_menu', options={
-		{ title='Give Money', description='Add money to player account', icon='plus', onSelect=function() giveMoney(targetId) end },
-		{ title='Remove Money', description='Remove money from player account', icon='minus', onSelect=function() removeMoney(targetId) end },
-		{ title='Set Money', description='Set exact amount of money', icon='equals', onSelect=function() setMoney(targetId) end },
-	}})
-	lib.registerContext({ id='qbx_job_menu', title='Job Management', menu='qbx_admin_menu', options={
-		{ title='Set Job', description='Change player job', icon='briefcase', onSelect=function() setJob(targetId) end },
-		{ title='Set Job Grade', description='Change player job grade', icon='star', onSelect=function() setJobGrade(targetId) end },
-		{ title='Toggle Duty', description='Toggle player duty status', icon='clock', onSelect=function() toggleDuty(targetId) end },
-	}})
-	lib.registerContext({ id='qbx_gang_menu', title='Gang Management', menu='qbx_admin_menu', options={
-		{ title='Set Gang', description='Change player gang', icon='users', onSelect=function() setGang(targetId) end },
-		{ title='Set Gang Grade', description='Change player gang grade', icon='crown', onSelect=function() setGangGrade(targetId) end },
-	}})
-	lib.showContext('qbx_admin_menu')
+local function openPlayerActions(targetId)
+        targetId = ensureTargetId(targetId)
+        if not targetId then return end
+        if not hasLib() or not lib.registerContext then return showNotification('ox_lib context menu not available.', 'error') end
+        local idx = getPlayerIndexFromServerId(targetId)
+        local playerName = (idx ~= -1 and GetPlayerName(idx)) or 'Unknown'
+        lib.registerContext({ id='qbx_admin_menu', title=('Admin Actions - %s (ID: %d)'):format(playerName, targetId), options={
+                { title='💰 Money Management', description='Give, remove, or set money', icon='dollar-sign', menu='qbx_money_menu' },
+                { title='💼 Job Management', description='Set job, grade, or toggle duty', icon='briefcase', menu='qbx_job_menu' },
+                { title='🔫 Gang Management', description='Set gang or gang grade', icon='users', menu='qbx_gang_menu' },
+                { title='❤️ Heal', description='Restore health/armor', icon='heart', onSelect=function() healPlayer(targetId) end },
+                { title='🫀 Revive', description='Bring back from downed state', icon='activity', onSelect=function() revivePlayer(targetId) end },
+                { title='ℹ️ Player Info', description='View detailed player information', icon='info', onSelect=function() getPlayerInfo(targetId) end },
+        }})
+        lib.registerContext({ id='qbx_money_menu', title='Money Management', menu='qbx_admin_menu', options={
+                { title='Give Money', description='Add money to player account', icon='plus', onSelect=function() giveMoney(targetId) end },
+                { title='Remove Money', description='Remove money from player account', icon='minus', onSelect=function() removeMoney(targetId) end },
+                { title='Set Money', description='Set exact amount of money', icon='equals', onSelect=function() setMoney(targetId) end },
+        }})
+        lib.registerContext({ id='qbx_job_menu', title='Job Management', menu='qbx_admin_menu', options={
+                { title='Set Job', description='Change player job', icon='briefcase', onSelect=function() setJob(targetId) end },
+                { title='Set Job Grade', description='Change player job grade', icon='star', onSelect=function() setJobGrade(targetId) end },
+                { title='Toggle Duty', description='Toggle player duty status', icon='clock', onSelect=function() toggleDuty(targetId) end },
+        }})
+        lib.registerContext({ id='qbx_gang_menu', title='Gang Management', menu='qbx_admin_menu', options={
+                { title='Set Gang', description='Change player gang', icon='users', onSelect=function() setGang(targetId) end },
+                { title='Set Gang Grade', description='Change player gang grade', icon='crown', onSelect=function() setGangGrade(targetId) end },
+        }})
+        lib.showContext('qbx_admin_menu')
 end
 
-registerAdminCommand('qbxadmin_menu', function(_, args) showTargetMenu(args[1]) end)
+local function openPlayersMenu()
+        if not hasLib() or not lib.registerContext then
+                return showNotification('ox_lib context menu not available.', 'error')
+        end
+        local selfId = GetPlayerServerId(PlayerId())
+        local options = {
+                { title=('Self - %s (ID: %d)'):format(GetPlayerName(PlayerId()), selfId), icon='user', onSelect=function()
+                        openPlayerActions(selfId)
+                end }
+        }
+        for _, idx in ipairs(GetActivePlayers()) do
+                local sid = GetPlayerServerId(idx)
+                if sid ~= selfId then
+                        options[#options+1] = {
+                                title = ('%s (ID: %d)'):format(GetPlayerName(idx), sid),
+                                icon = 'user',
+                                onSelect = function() openPlayerActions(sid) end
+                        }
+                end
+        end
+        lib.registerContext({ id='qbx_admin_players', title='Players', options=options })
+        lib.showContext('qbx_admin_players')
+end
+
+registerAdminCommand('qbxadmin_menu', function(_, args)
+        local target = args[1]
+        if target then
+                openPlayerActions(target)
+        else
+                openPlayersMenu()
+        end
+end)
 registerAdminCommand('qbxadmin_menu_aim', function()
-	local sid = getAimedServerId()
-	if sid then showTargetMenu(sid) else showNotification('Aim at a player first.', 'error') end
+        local sid = getAimedServerId()
+        if sid then
+                openPlayerActions(sid)
+        else
+                showNotification('Aim at a player first.', 'error')
+        end
 end)
 
 -- Chat Suggestions
