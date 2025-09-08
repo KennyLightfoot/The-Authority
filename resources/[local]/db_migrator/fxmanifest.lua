@@ -15,6 +15,10 @@ server_scripts {
     'server/migrator.lua'
 }
 
+files {
+    'migrations/*.sql',
+}
+
 dependencies {
     'oxmysql',
     'ox_lib'
