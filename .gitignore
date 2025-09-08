@@ -5,6 +5,10 @@ server/
 # allow core server scripts
 !resources/\[local\]/core/server/
 !resources/\[local\]/core/server/*
+!resources/\[qbx\]/qbx_core/server/
+!resources/\[qbx\]/qbx_core/server/*
+!resources/\[standalone\]/authority_season/server/
+!resources/\[standalone\]/authority_season/server/*
 *.log
 *.db
 

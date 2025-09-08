@@ -1,15 +1,5 @@
+-- Configuration for Authority mechanics
+
 Config = Config or {}
 
-Config.Standing = {
-  Min = -100,
-  Max = 100,
-}
-
-Config.Heat = {
-  Min = 0,
-  Max = 100,
-}
-
-
-
-
+Config.HeatTickInterval = 60000 -- milliseconds between heat system ticks

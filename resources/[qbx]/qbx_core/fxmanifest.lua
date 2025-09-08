@@ -32,6 +32,9 @@ client_scripts {
     'client/heat_effects.lua',
     'client/onboarding_ui.lua',
     'bridge/qb/client/main.lua',
+    'client/authority_hud.lua',
+    'client/heat_effects.lua',
+    'client/onboarding_ui.lua',
 }
 
 server_scripts {
@@ -50,6 +53,9 @@ server_scripts {
     'server/heat_system.lua',
     'server/onboarding.lua',
     'bridge/qb/server/main.lua',
+    'server/authority_standing.lua',
+    'server/heat_system.lua',
+    'server/onboarding.lua',
 }
 
 files {

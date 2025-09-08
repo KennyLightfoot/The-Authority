@@ -1,3 +1,5 @@
+-- Authority system sidecar tables
+
 -- player_meta (sidecar for custom stats)
 CREATE TABLE IF NOT EXISTS player_meta (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,7 +40,3 @@ CREATE TABLE IF NOT EXISTS heat_zones (
   UNIQUE KEY uk_zone_name (zone_name),
   INDEX idx_updated (last_updated)
 );
-
-
-
-
