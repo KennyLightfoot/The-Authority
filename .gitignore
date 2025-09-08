@@ -9,6 +9,7 @@ server/
 .env
 *.env
 server.cfg
+config/secrets.cfg
 
 # Temporary Files
 tmp/
