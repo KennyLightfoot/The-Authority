@@ -14,4 +14,5 @@ CLIENT = {
   META_PUSH         = 'authority:client:metaPush',         -- server → client state push
   HUD_FLASH         = 'authority:client:hudFlash',
   HEAT_UPDATE       = 'authority:client:heatUpdate',
+  HEAT_ZONES_INIT   = 'authority:client:heatZonesInit',
 }
