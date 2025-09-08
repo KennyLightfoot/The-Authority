@@ -1,5 +1,11 @@
 local has = function(perm)
-  return lib.checkPermission and lib.checkPermission(perm)
+  return lib.checkPermission and lib.checkPermission(perm) or true
+end
+
+local function any(perms)
+  for i=1, #perms do
+    if has(perms[i]) then return true end
+  end
 end
 
 local function inputNumber(title, min, max)
@@ -204,10 +210,18 @@ end
 
 local function openPlayersMenu()
   local opts = {}
+  local myPed = cache.ped
+  local myPos = GetEntityCoords(myPed)
   for _,pid in ipairs(GetActivePlayers()) do
-    local sid = GetPlayerServerId(pid)
-    local name = GetPlayerName(pid)
-    opts[#opts+1] = { title = ("%s (%s)"):format(name, sid), onSelect = function() openPlayerActions(sid) end }
+    if pid ~= PlayerId() then
+      local ped = GetPlayerPed(pid)
+      local pos = GetEntityCoords(ped)
+      if #(myPos - pos) < 20.0 then
+        local sid = GetPlayerServerId(pid)
+        local name = GetPlayerName(pid)
+        opts[#opts+1] = { title = ("%s (%s)"):format(name, sid), onSelect = function() openPlayerActions(sid) end }
+      end
+    end
   end
   opts[#opts+1] = { title = 'Search by ID', onSelect = function()
     local id = inputNumber('Server ID', 1, 1024)
@@ -215,6 +229,11 @@ local function openPlayersMenu()
   end }
   lib.registerContext({ id = 'admin_players', title = 'Players', options = opts })
   lib.showContext('admin_players')
+end
+
+local function openEconomyRootMenu()
+  local id = inputNumber('Target ID', 1, 1024)
+  if id then openEconomyMenu(id) end
 end
 
 local function openVehicleMenu()
@@ -253,11 +272,22 @@ end
 
 local function openAdminMenu()
   local opts = {}
-  opts[#opts+1] = { title = 'Players', onSelect = openPlayersMenu }
-  opts[#opts+1] = { title = 'Vehicles', onSelect = openVehicleMenu }
-  opts[#opts+1] = { title = 'Utilities', onSelect = openUtilitiesMenu }
-  lib.registerContext({ id = 'admin_root', title = 'Admin Menu', options = opts })
-  lib.showContext('admin_root')
+  if any({'qbxadmin.tp','qbxadmin.spectate','qbxadmin.freeze','qbxadmin.medical','qbxadmin.moderation'}) then
+    opts[#opts+1] = { title = 'Players', onSelect = openPlayersMenu }
+  end
+  if any({'qbxadmin.givecash','qbxadmin.takecash','qbxadmin.giveitem'}) then
+    opts[#opts+1] = { title = 'Economy', onSelect = openEconomyRootMenu }
+  end
+  if any({'qbxadmin.vehicle_basic','qbxadmin.vehicle_delete'}) then
+    opts[#opts+1] = { title = 'Vehicles', onSelect = openVehicleMenu }
+  end
+  if any({'qbxadmin.noclip','qbxadmin.ids','qbxadmin.announce'}) then
+    opts[#opts+1] = { title = 'Utilities', onSelect = openUtilitiesMenu }
+  end
+  if #opts > 0 then
+    lib.registerContext({ id = 'admin_root', title = 'Admin Menu', options = opts })
+    lib.showContext('admin_root')
+  end
 end
 
 RegisterKeyMapping('adminmenu', 'Open Admin Menu', 'keyboard', 'F10')
