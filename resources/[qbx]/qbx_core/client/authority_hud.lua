@@ -16,4 +16,10 @@ RegisterCommand('authhud', function()
   SendNUIMessage({ type = 'authority:toggle' })
 end, false)
 
+-- Also react to a server-triggered toggle for convenience
+RegisterNetEvent('authority:client:hudToggle', function()
+  SetNuiFocus(false, false)
+  SendNUIMessage({ type = 'authority:toggle' })
+end)
+
 

@@ -8,6 +8,8 @@ version '1.23.0'
 
 ox_lib 'locale'
 
+ui_page 'html/index.html'
+
 shared_scripts {
     '@ox_lib/init.lua',
     'modules/lib.lua',
@@ -68,6 +70,9 @@ files {
     'config/client.lua',
     'config/shared.lua',
     'locales/*.json'
+    , 'html/index.html'
+    , 'html/style.css'
+    , 'html/app.js'
 }
 
 dependencies {

@@ -1,0 +1,35 @@
+:root {
+  --bg: rgba(0, 0, 0, 0.6);
+  --fg: #e5e7eb;
+  --accent: #60a5fa;
+  --warn: #f59e0b;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: transparent; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+#hud {
+  position: fixed;
+  top: 48px;
+  left: 48px;
+  min-width: 180px;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 14px;
+  backdrop-filter: blur(4px);
+}
+
+#hud.hidden { display: none; }
+
+.row { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; }
+.row.small { opacity: 0.85; font-size: 12px; }
+
+.label { color: #9ca3af; margin-right: 12px; }
+.value { color: var(--fg); font-weight: 600; }
+
+#heat.value, .value.heat { color: var(--warn); }
+#authority.value, .value.auth { color: var(--accent); }
+
+

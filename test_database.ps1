@@ -196,8 +196,24 @@ try {
     Write-Host "❌ Database Performance: Error - $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# Test 10: Check Migration Files
-Write-Host "`n10. Testing Migration Files..." -ForegroundColor Green
+# Test 10: Check Authority System Tables
+Write-Host "`n10. Testing Authority System Tables..." -ForegroundColor Green
+$authorityTables = @('player_meta', 'authority_events', 'heat_zones')
+foreach ($table in $authorityTables) {
+    try {
+        $tableCheck = mysql -u $username -p$password -h $dbHost -D $database -e "SHOW TABLES LIKE '$table';" 2>&1
+        if ($tableCheck -match $table) {
+            Write-Host "✅ Authority Table '$table': Exists" -ForegroundColor Green
+        } else {
+            Write-Host "⚠️ Authority Table '$table': Missing (will be created by migration)" -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "❌ Authority Table '$table': Error checking" -ForegroundColor Red
+    }
+}
+
+# Test 11: Check Migration Files
+Write-Host "`n11. Testing Migration Files..." -ForegroundColor Green
 $migrationFiles = @(
     '2025-01-01-renewed_banking.sql',
     '2025-01-02-appearance.sql', 
@@ -206,7 +222,8 @@ $migrationFiles = @(
     '2025-01-05-npwd.sql',
     '2025-01-06-qa_bookkeeping.sql',
     '2025-01-07-bans.sql',
-    '2025-01-08-telemetry.sql'
+    '2025-01-08-telemetry.sql',
+    '2025-01-09-authority.sql'
 )
 
 foreach ($file in $migrationFiles) {
