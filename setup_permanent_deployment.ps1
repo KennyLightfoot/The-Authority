@@ -14,13 +14,14 @@ if ($latestProfile) {
     
     # Create a permanent server configuration
     $serverConfig = @"
-# Qbox Project Server Configuration
+# Qbox Project Server Configuration (hardened)
 # Generated on $(Get-Date)
 
 # Basic server settings
 set sv_hostname "The Authority RP Server"
 set sv_maxclients 32
 set sv_licenseKey "CHANGE_ME"
+sv_scriptHookAllowed 0
 
 # Database connection
 set mysql_connection_string "mysql://fivem:CHANGE_ME@127.0.0.1/authority?charset=utf8mb4"
@@ -41,9 +42,10 @@ set txAdmin-luaComToken "CHANGE_ME"
 set txAdmin-luaComPort "40120"
 
 # Resource loading
-ensure qbx_core
 ensure oxmysql
 ensure ox_lib
+ensure db_migrator
+ensure qbx_core
 ensure ox_inventory
 ensure ox_target
 ensure PolyZone
@@ -61,15 +63,15 @@ ensure qbx_vehicles
 ensure qbx_vehiclekeys
 ensure qbx_garages
 ensure qb-delivery
-ensure Badger_Discord_API
-ensure discord_perms
-ensure EasyAdmin
-ensure db_migrator
+# ensure Badger_Discord_API
+# ensure discord_perms
+# ensure EasyAdmin
 ensure core
 ensure job_patches
 ensure qa_tools
 ensure ea_keybind
 ensure telemetry
+ensure healthcheck
 "@
 
     # Write the server configuration

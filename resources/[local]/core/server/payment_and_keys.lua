@@ -23,11 +23,6 @@ end
 
 exports('chargeAccount', chargeAccount)
 
-lib.callback.register('authority:chargeAccount', function(_, account, amount, title, message)
-    local ok, err = chargeAccount(account, amount, title, message)
-    return ok, err
-end)
-
 local function giveVehicleKeys(src, vehicle)
     if GetResourceState('qbx_vehiclekeys') ~= 'started' then
         return false, 'vehiclekeys_not_started'

@@ -1,26 +1,34 @@
-# FiveM Server Files
+# Secrets and Environment
+config/secrets.cfg
+.env
+*.env
+
+# FiveM Server Data
+txData/
 cache/
 db/
 server/
-# allow core server scripts
-!resources/\[local\]/core/server/
-!resources/\[local\]/core/server/*
-# allow qbx_core server scripts
-!resources/\[qbx\]/qbx_core/server/
-!resources/\[qbx\]/qbx_core/server/*
 *.log
 *.db
 
-# Environment and Secrets
-.env
-*.env
-server.cfg
-config/secrets.cfg
+# Build Artifacts
+**/web/build/
+**/node_modules/
+node_modules/
+
+# Archives
+*.zip
+*.7z
+*.rar
+*.tar.gz
 
 # Temporary Files
 tmp/
 *.tmp
 *.temp
+*.bak
+*.backup
+*~
 
 # OS Files
 .DS_Store
@@ -32,14 +40,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.sublime-*
-
-# Node Modules (if any)
-node_modules/
-
-# Backup Files
-*.bak
-*.backup
-*~
 
 # FiveM Specific
 fxmanifest.lua.bak

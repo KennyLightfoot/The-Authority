@@ -93,6 +93,9 @@ Download the following resources and place them in the correct folders:
    - Create new server profile
    - Point to your `server.cfg` file
    - Start the server
+   - Configure OneSync in the txAdmin profile (do not set in server.cfg)
+   - Ensure `sv_scriptHookAllowed 0` is set in `server.cfg`
+   - Optional: set `healthcheck_port` convar and probe `http://host:30121/health`
 
 2. **Direct Start**:
    ```cmd
@@ -305,6 +308,8 @@ This should show all green checkmarks (✅) for:
 - Use `/qa:base` for system health checks
 - Verify all resources are latest stable versions
 - Join The Authority Discord for community support
+
+
 
 
 

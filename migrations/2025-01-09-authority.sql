@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS player_meta (
   citizenid VARCHAR(64) NOT NULL UNIQUE,
   authority_standing TINYINT NOT NULL DEFAULT 0,
   heat_level TINYINT UNSIGNED NOT NULL DEFAULT 0,
-  player_path VARCHAR(16) NOT NULL DEFAULT 'undecided',
+  player_path ENUM('pioneer','rebel','undecided') NOT NULL DEFAULT 'undecided',
   onboarding_complete BOOLEAN NOT NULL DEFAULT FALSE,
   playtime_minutes INT UNSIGNED NOT NULL DEFAULT 0,
   resistance_pass_level SMALLINT UNSIGNED NOT NULL DEFAULT 0,
@@ -16,6 +16,13 @@ CREATE TABLE IF NOT EXISTS player_meta (
   INDEX idx_path (player_path),
   INDEX idx_updated (last_updated)
 );
+
+-- Backfill/alter to ensure schema matches targets
+ALTER TABLE player_meta
+  MODIFY player_path ENUM('pioneer','rebel','undecided') NOT NULL DEFAULT 'undecided',
+  MODIFY authority_standing TINYINT NOT NULL DEFAULT 0,
+  MODIFY heat_level TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  MODIFY onboarding_complete BOOLEAN NOT NULL DEFAULT FALSE;
 
 -- authority_events (auditable changes)
 CREATE TABLE IF NOT EXISTS authority_events (

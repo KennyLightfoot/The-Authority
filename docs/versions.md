@@ -5,7 +5,7 @@ This document tracks the exact versions and sources of all resources used in The
 ## Core Framework
 
 ### QBX Framework
-- **qbx_core**: `v1.17.0` - [GitHub Release](https://github.com/Qbox-project/qbx_core/releases/tag/v1.17.0)
+- **qbx_core**: `v1.23.0` - [GitHub Release](https://github.com/Qbox-project/qbx_core/releases/tag/v1.23.0)
   - SHA: `a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0`
   - Critical: Main framework, must load first
 
@@ -16,21 +16,20 @@ This document tracks the exact versions and sources of all resources used in The
 
 ## Libraries
 
-### Overextended
-- **ox_lib**: `v3.20.0` - [GitHub Release](https://github.com/overextended/ox_lib/releases/tag/v3.20.0)
+- **ox_lib**: `v3.30.6` - [GitHub Release](https://github.com/overextended/ox_lib/releases/tag/v3.30.6)
   - SHA: `c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2`
   - Core library for UI, notifications, and utilities
 
-- **ox_inventory**: `v2.41.0` - [GitHub Release](https://github.com/overextended/ox_inventory/releases/tag/v2.41.0)
+- **ox_inventory**: `v2.44.1` - [GitHub Release](https://github.com/overextended/ox_inventory/releases/tag/v2.44.1)
   - SHA: `d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3`
   - Modern inventory system
 
-- **ox_target**: `v1.16.0` - [GitHub Release](https://github.com/overextended/ox_target/releases/tag/v1.16.0)
+- **ox_target**: `v1.17.2` - [GitHub Release](https://github.com/overextended/ox_target/releases/tag/v1.17.2)
   - SHA: `e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4`
   - Interaction system
 
 ### Utility Libraries
-- **PolyZone**: `v3.2.1` - [GitHub Release](https://github.com/mkafrin/PolyZone/releases/tag/v3.2.1)
+- **PolyZone**: `v2.6.2` - [GitHub Release](https://github.com/mkafrin/PolyZone/releases)
   - SHA: `f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5`
   - Zone creation and management
 
@@ -159,6 +158,8 @@ Document all version changes here with:
 **Last Updated**: January 6, 2025  
 **Maintained By**: The Authority Development Team  
 **Review Schedule**: Monthly version audits
+
+
 
 
 

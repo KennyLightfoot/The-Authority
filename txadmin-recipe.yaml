@@ -1,0 +1,63 @@
+name: The Authority - QBX
+version: 1.0.0
+author: The Authority Dev Team
+
+tasks:
+  - action: download_file
+    url: https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/
+    path: artifacts_url.txt
+
+  - action: ensure_dir
+    path: resources
+
+  - action: git_clone
+    repo: https://github.com/Qbox-project/qbx_core.git
+    ref: v1.23.0
+    dest: resources/[qbx]/qbx_core
+
+  - action: git_clone
+    repo: https://github.com/overextended/ox_lib.git
+    ref: v3.30.6
+    dest: resources/[ox]/ox_lib
+
+  - action: git_clone
+    repo: https://github.com/overextended/ox_inventory.git
+    ref: v2.44.1
+    dest: resources/[ox]/ox_inventory
+
+  - action: git_clone
+    repo: https://github.com/overextended/ox_target.git
+    ref: v1.17.2
+    dest: resources/[ox]/ox_target
+
+  - action: git_clone
+    repo: https://github.com/AvarianKnight/pma-voice.git
+    ref: master
+    dest: resources/[voice]/pma-voice
+
+  - action: write_file
+    path: server.cfg
+    data: |
+      exec config/secrets.cfg
+      sv_hostname "The Authority RP | QBX Framework"
+      sv_maxclients 32
+      endpoint_add_tcp "0.0.0.0:30120"
+      endpoint_add_udp "0.0.0.0:30120"
+      sv_scriptHookAllowed 0
+      ensure oxmysql
+      ensure ox_lib
+      ensure db_migrator
+      ensure qbx_core
+      ensure ox_inventory
+      ensure ox_target
+      ensure PolyZone
+      ensure pma-voice
+      setr inventory:framework "qbx"
+      set qbx:acknowledge true
+      setr voice_useSendingRangeOnly true
+      setr voice_enableProximityCycle 1
+      setr voice_defaultCycle "F11"
+      sets sv_projectName "The Authority RP"
+      sets sv_projectDesc "Professional QBX Roleplay Server"
+
+
