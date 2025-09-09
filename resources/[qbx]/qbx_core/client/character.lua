@@ -285,6 +285,10 @@ local function spawnDefault() -- We use a callback to make the server wait on th
     while not IsScreenFadedIn() do
         Wait(0)
     end
+    -- Close loading screen if still open
+    pcall(function()
+        if ShutdownLoadingScreenNui then ShutdownLoadingScreenNui() end
+    end)
     TriggerEvent('qb-clothes:client:CreateFirstCharacter')
 end
 
@@ -313,6 +317,10 @@ local function spawnLastLocation()
     while not IsScreenFadedIn() do
         Wait(0)
     end
+    -- Close loading screen if still open
+    pcall(function()
+        if ShutdownLoadingScreenNui then ShutdownLoadingScreenNui() end
+    end)
 end
 
 ---@param cid integer

@@ -10,3 +10,4 @@ ALTER TABLE player_meta
   MODIFY authority_standing TINYINT NOT NULL DEFAULT 0,
   MODIFY heat_level TINYINT UNSIGNED NOT NULL DEFAULT 0;
 
+

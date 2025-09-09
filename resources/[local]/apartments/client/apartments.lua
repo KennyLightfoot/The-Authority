@@ -68,6 +68,11 @@ RegisterNetEvent('apartments:client:spawnInApartment', function(apartment)
         Wait(0)
     end
     
+    -- Close loading screen if still open
+    pcall(function()
+        if ShutdownLoadingScreenNui then ShutdownLoadingScreenNui() end
+    end)
+
     -- Create interaction points
     CreateApartmentInteractions(apartment)
     

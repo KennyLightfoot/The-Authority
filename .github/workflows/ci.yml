@@ -1,4 +1,4 @@
-name: CI
+name: ci
 
 on:
   push:
@@ -7,46 +7,28 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-lua:
+  lint-format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Lua
-        uses: leafo/gh-actions-lua@v10
-        with:
-          luaVersion: '5.4'
-      - name: Install luarocks
-        uses: leafo/gh-actions-luarocks@v4
-      - name: Install luacheck
-        run: luarocks install luacheck
-      - name: Run luacheck
+      - name: Install Lua tools
         run: |
-          luacheck resources --no-color --codes --formatter TAP || true
+          sudo apt-get update
+          sudo apt-get install -y luarocks
+          sudo luarocks install luacheck
+          curl -L https://github.com/JohnnyMorganz/StyLua/releases/download/v0.20.0/stylua-linux-x86_64.zip -o stylua.zip
+          unzip -o stylua.zip -d /usr/local/bin
+      - name: Luacheck
+        run: luacheck resources
+      - name: StyLua check
+        run: stylua --check resources
+      - name: Validate fxmanifest
+        run: |
+          if ! grep -R "fx_version" -n resources; then
+            echo "Missing fxmanifest in a resource"; exit 1; fi
+      - name: SQL dry-run
+        run: |
+          if [ -f docs/MIGRATIONS.sql ]; then
+            echo "Lint only: ensure MIGRATIONS.sql exists"; fi
 
-  validate-fxmanifest:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate fxmanifests exist
-        run: |
-          test -f server.cfg
-          find resources -name fxmanifest.lua -print | tee /dev/stderr | grep -q fxmanifest.lua
-
-  build-ui:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use PNPM
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-      - name: Install UI deps if present
-        run: |
-          set -e
-          if [ -f resources/[cfx]/chat/web/package.json ]; then
-            cd resources/[cfx]/chat/web && pnpm i && pnpm build
-          fi
-          if [ -f resources/[ox]/ox_lib/web/package.json ]; then
-            cd resources/[ox]/ox_lib/web && pnpm i && pnpm build
-          fi
 

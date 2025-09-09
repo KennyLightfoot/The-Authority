@@ -22,9 +22,17 @@ RegisterCommand('testdelivery', function()
         duration = 3000
     })
     
-    -- Trigger server event
-    TriggerServerEvent('qb-delivery:server:completedDelivery', 'package', 1000)
+    -- Tokenized payout: request token then trigger secure payout
+    local payload = { package = 1, distance_km = 1.0 }
+    lib.callback('authority:token:payout', false, function(tok)
+        if not tok then
+            lib.notify({ type = 'error', description = 'Payout token failed' })
+            return
+        end
+        TriggerServerEvent('authority:job:payout', 'delivery', payload, tok)
+    end)
 end, false)
+
 
 
 

@@ -1,0 +1,427 @@
+The Authority — Implementation Plan (v2)
+Phase 0 – Foundation & Security (Week 1)
+🔒 Security & Anti-cheat
+
+qbx_anticheat (custom or fork)
+
+Rate-limit money/stash RPCs (default 3/sec per player per RPC).
+
+One-shot transaction tokens for shop purchases/payouts.
+
+RPC validation (server-authoritative):
+
+Recompute server prices/quantities using price_registry (below).
+
+Reject any client total; clamp negative/overflow.
+
+Audit logging (DB + webhook):
+
+money/item transfers, stash access, arrests, shop actions.
+
+30-day DB retention; Discord mod-log for staff actions.
+
+Performance monitor:
+
+Alert when any core resource >0.30 ms idle; log resmon deltas per restart.
+
+📊 Monitoring & Telemetry
+
+Telemetry events → DB:
+
+onboarding_start/complete, money_change, standing_change,
+heat_change, robbery_start/end, arrest_made, queue_join/leave, crash.
+
+Daily Discord KPI digest (players online, job completions, sinks/sources, top errors).
+
+Backup system:
+
+Nightly DB snapshots (35-day retention), weekly full snapshot (12 weeks).
+
+One restore rehearsal before first playtest.
+
+🧭 Onboarding System
+
+Path selection (Pioneer/Rebel/Undecided) → players.player_path.
+
+Guided 10-min loop: Mine → Smelt → Sell (waypoints/TextUI).
+
+New player protection: 2h reduced damage / robbery block.
+
+Soft whitelist: Discord form/role → auto allowlist sync.
+
+Staging ≡ Prod resource parity; stricter convars in prod.
+
+🛡️ Moderation & Ops
+
+Neutral staff tool (spectate/goto/bring/freeze/inv view/kick/ban); immutable mod-log + Discord webhook.
+
+Feature flags: convars to instantly disable shops/jobs/transfers.
+
+Exploit playbooks: dupe/injection/vehicle spam SOPs in docs.
+
+Phase 1 – Core Systems (Week 2)
+💼 Economy & Jobs
+
+vhs-recycle, jim-mining, jim-mechanic, taxi/uber, qb-busjob.
+
+Price registry (server only) powers all payouts/prices.
+
+Economy matrix (CSV/JSON): target $/hr per activity; sinks:sources ≥ 1.2:1.
+
+Per-job diminishing returns (soft cap/hour) to curb botting.
+
+🌆 World Systems
+
+qbx_houses (critical), qb-fuel or LegacyFuel, Renewed-Banking ATMs,
+illenium-appearance clothing, qb-weathersync.
+
+Districts registry backing Heat 2.0 & announcements.
+
+Streaming/asset budget: hubs ≤450 MB; normalize addon vehicle handling.
+
+🧑‍⚖️ City Services
+
+qbx_policejob (Mission Row), qbx_ambulancejob (Pillbox), Ammu-Nation (license gating),
+Courthouse (license issuance + simple court cases), City Repair (fixed-price bays).
+
+♿ Player UX & Accessibility
+
+Keybind center; controller-friendly prompts.
+
+TextUI scale slider; color-blind safe markers; subtitles for city announcements.
+
+Tutorial index (phone app or /help) with jobs/laws/FAQs.
+
+🤝 Discord & Community
+
+/report → Discord mod-queue (coords & optional image).
+
+Status message (online/queue + last patch notes link).
+
+Phase 2 – Engagement Systems (Week 3)
+🏛️ Authority Systems
+
+Authority Standing (–100↔+100) with daily decay to 0.
+
+Heat 2.0: district heat → checkpoints/curfews/bonuses; billboard + dispatch messages.
+
+qbx_gangs; Casino (staged) — blackjack/slots/wheel.
+
+📱 Community Features & Monetization
+
+NPWD phone; Resistance Pass (Season Zero) cosmetics via Tebex (Cfx policy compliant).
+
+Streamer program (queue priority/codes); Server trailer (Pioneer vs Rebel).
+
+Phase 3 – Polish & Events (Week 4)
+
+Mini-games: qb-golf, qb-carwash, qb-fishing, qb-towjob, qb-trucking.
+
+Weekly car meets; Penrose rally; underground races; open social hubs.
+
+Server ensure Order (replace your block)
+# ==== Core libs ====
+ensure ox_lib
+ensure ox_inventory
+ensure ox_target
+ensure PolyZone
+ensure pma-voice
+ensure qbx_core
+
+# ==== Banking / Appearance / Phone ====
+ensure Renewed-Banking
+ensure illenium-appearance
+ensure npwd
+
+# ==== Security & Monitoring ====
+ensure qbx_anticheat
+ensure audit_logs
+ensure performance_monitor
+
+# ==== Onboarding ====
+ensure onboarding
+
+# ==== Jobs ====
+ensure vhs-recycle
+ensure jim-mining
+ensure jim-mechanic
+ensure qb-busjob
+
+# ==== City Services ====
+ensure qbx_policejob
+ensure qbx_ambulancejob
+ensure city_services
+ensure city_shops
+ensure city_repair
+
+# ==== World Systems ====
+ensure qbx_houses
+ensure qb-fuel
+ensure qb-weathersync
+
+# ==== Engagement ====
+ensure qbx_gangs
+ensure qb-casino
+
+docs/MIGRATIONS.sql (append-safe)
+-- Players: authority/onboarding (idempotent)
+ALTER TABLE players
+  ADD COLUMN IF NOT EXISTS authority_standing INT DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS heat_level INT DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS player_path ENUM('pioneer','rebel','undecided') DEFAULT 'undecided',
+  ADD COLUMN IF NOT EXISTS onboarding_complete TINYINT(1) DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS playtime_hours FLOAT DEFAULT 0;
+
+-- Audit logs
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  player_identifier VARCHAR(64) NOT NULL,
+  action VARCHAR(48) NOT NULL,
+  context JSON,
+  ip_hash VARCHAR(64) NULL,
+  idx_1 VARCHAR(64) NULL,
+  idx_2 VARCHAR(64) NULL
+) ENGINE=InnoDB;
+CREATE INDEX IF NOT EXISTS idx_audit_ts ON audit_logs (ts);
+CREATE INDEX IF NOT EXISTS idx_audit_player ON audit_logs (player_identifier);
+
+-- Telemetry
+CREATE TABLE IF NOT EXISTS telemetry_events (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  event_name VARCHAR(48) NOT NULL,
+  player_identifier VARCHAR(64) NULL,
+  payload JSON
+) ENGINE=InnoDB;
+CREATE INDEX IF NOT EXISTS idx_tel_evt ON telemetry_events (event_name, ts);
+
+-- Court (lightweight placeholder)
+CREATE TABLE IF NOT EXISTS court_cases (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  plaintiff VARCHAR(64) NOT NULL,
+  defendant VARCHAR(64) NOT NULL,
+  status ENUM('filed','hearing','decided','dismissed') DEFAULT 'filed',
+  verdict JSON NULL
+) ENGINE=InnoDB;
+
+CI Config Stubs
+.luacheckrc
+std = "luajit"
+globals = {
+  "RegisterNetEvent","TriggerServerEvent","TriggerClientEvent","CreateThread",
+  "lib","exports","GetConvar","GetConvarInt","GetConvarBool",
+  "PlayerPedId","vector3","vec3","Citizen","Wait"
+}
+unused_args = false
+codes = true
+
+.stylua.toml
+column_width = 120
+line_endings = "Unix"
+indent_type = "Spaces"
+indent_width = 2
+quote_style = "AutoPreferDouble"
+no_call_parentheses = false
+
+GitHub Actions: .github/workflows/ci.yml
+name: ci
+on:
+  push: { branches: ["main"] }
+  pull_request: { branches: ["main"] }
+jobs:
+  lint-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luarocks
+          sudo luarocks install luacheck
+          curl -L https://github.com/JohnnyMorganz/StyLua/releases/download/v0.20.0/stylua-linux-x86_64.zip -o stylua.zip
+          unzip -o stylua.zip -d /usr/local/bin
+      - name: Luacheck
+        run: luacheck resources
+      - name: StyLua check
+        run: stylua --check resources
+      - name: Validate fxmanifest
+        run: |
+          if ! grep -R "fx_version" -n resources; then
+            echo "Missing fxmanifest in a resource"; exit 1; fi
+      - name: SQL dry-run
+        run: |
+          if [ -f docs/MIGRATIONS.sql ]; then
+            echo "Lint only: ensure MIGRATIONS.sql exists"; fi
+
+Price Registry (server-authoritative)
+
+File: resources/[local]/authority_security/price_registry.lua
+
+local PriceRegistry = {}
+
+-- Version all price sets so you can A/B and rollback quickly.
+PriceRegistry.version = "2025-09-08-a"
+
+-- Immutable price table used server-side only.
+-- Clients NEVER send totals; server recomputes against this.
+PriceRegistry.catalog = {
+  shops = {
+    convenience = {
+      water = { price = 5, max = 10 },
+      sandwich = { price = 12, max = 10 },
+      bandage = { price = 60, max = 5 },
+    },
+    ammunation = {
+      pistol_ammo = { price = 250, max = 4, requires = { license = "firearm" } },
+    },
+  },
+  services = {
+    repair_basic = { price = 450 },
+    taxi_per_km  = { price = 22, cap = 800 },
+  },
+  payouts = {
+    vhs_recycle = {
+      glass = 6, plastic = 5, scrap_metal = 8
+    },
+    mining = {
+      ore_iron = 10, ore_copper = 8, bar_gold = 220
+    },
+  },
+  taxes = {
+    sales = 0.05,    -- 5%
+    income = 0.10,   -- 10%
+  }
+}
+
+function PriceRegistry:getShopItemPrice(shop, item, qty)
+  local s = self.catalog.shops[shop]; if not s then return nil, "shop" end
+  local row = s[item]; if not row then return nil, "item" end
+  qty = math.max(1, math.floor(qty or 1))
+  if row.max and qty > row.max then return nil, "max" end
+  return row.price * qty, nil, row
+end
+
+function PriceRegistry:getServicePrice(name, units)
+  local row = self.catalog.services[name]; if not row then return nil, "service" end
+  units = math.max(1, math.floor(units or 1))
+  local total = row.price * units
+  if row.cap then total = math.min(total, row.cap) end
+  return total
+end
+
+function PriceRegistry:getPayout(job, item, qty)
+  local j = self.catalog.payouts[job]; if not j then return nil, "job" end
+  local p = j[item]; if not p then return nil, "item" end
+  qty = math.max(1, math.floor(qty or 1))
+  return p * qty
+end
+
+return PriceRegistry
+
+
+Usage pattern (server):
+
+local Prices = require 'price_registry'
+
+-- Example: shop purchase validation
+local total, err, meta = Prices:getShopItemPrice('convenience', 'water', requestedQty)
+if not total then return deny(("invalid_%s"):format(err)) end
+if meta.requires and meta.requires.license == 'firearm' and not HasLicense(src, 'firearm') then
+  return deny('license_required')
+end
+-- server charges exact `total` (plus taxes if configured) and grants items;
+-- never trust any client-sent price.
+
+Districts Registry (Heat 2.0 backbone)
+
+File: resources/[local]/authority_identity/districts.lua
+
+local Districts = {
+  version = "2025-09-08-a",
+  -- Minimal starter: define polygons (vec3 or vec2), names, and weights.
+  -- Use these for Heat accumulation, announcements, and job modifiers.
+  zones = {
+    { name = "LSIA", weight = 1.0, poly = {
+      vec3(-1200, -3500, 13), vec3(-1200, -2500, 13), vec3(-1800, -2500, 13), vec3(-1800, -3500, 13)
+    }},
+    { name = "Downtown", weight = 1.2, poly = {
+      vec3(200, -1100, 28), vec3(500, -1100, 28), vec3(500, -800, 28), vec3(200, -800, 28)
+    }},
+    { name = "Vespucci", weight = 1.1, poly = {
+      vec3(-1400, -1200, 4), vec3(-900, -1200, 4), vec3(-900, -800, 4), vec3(-1400, -800, 4)
+    }},
+  },
+  thresholds = {
+    checkpoint = 100,
+    curfew     = 200,
+  },
+  decay_per_min = 0.5
+}
+
+return Districts
+
+OPERATIONS.md (starter)
+# OPERATIONS
+
+## Profiles
+- Staging = Prod resources; prod only differs via convars (security stricter).
+
+## Release
+- CI: luacheck, stylua, fxmanifest validation, SQL dry-run.
+- Tag -> artifact zip (configs + resource hashes).
+- Maintenance windows: Tue/Thu 1:00–1:30 AM CT.
+- Rollback: stop → swap artifact → restart → verify health checks.
+
+## Backups & DR
+- Nightly DB (35d), weekly full snapshot (12w).
+- Restore rehearsal: perform once pre-launch, quarterly thereafter.
+
+## Monitoring
+- Resmon idle gates: core ≤0.20 ms, warn at 0.30 ms.
+- Daily Discord KPI digest (players peak/avg, sinks/sources, job runs, top errors).
+
+## Playbooks
+- Economy dupe: disable shops via convar → isolate audits → hotfix validation → re-enable.
+- Stash dupe: freeze inventory ops → migrate to tokenized transfers → spot-audit last 4h.
+- Vehicle spam: limit spawns per 5m → lock down offending resource → mod-log actions.
+
+STAFF_ONBOARDING.md (starter)
+# Staff Onboarding
+
+## Access
+- txAdmin ACL: group.admin for Sr. Staff, group.moderator for Mods.
+- In-game staff tool: /staff (spectate, goto, bring, freeze, inv view, warn, kick, ban).
+
+## Evidence & Mod-Log
+- Every punitive action requires: reason code + short note.
+- System writes DB mod-log + Discord webhook with player id, coords, timestamp.
+
+## Escalation
+- Warn → Kick → 24h Ban → Appeal queue (tickets) → Sr. Staff review.
+
+## Privacy
+- No PII in screenshots or public posts; redact identifiers in Discord when sharing outside mod channels.
+
+.env.example (document required secrets)
+DB_HOST=127.0.0.1
+DB_USER=fivem
+DB_PASS=changeme
+DB_NAME=authority
+
+DISCORD_BOT_TOKEN=
+DISCORD_GUILD_ID=
+DISCORD_ALLOWLIST_ROLE_ID=
+DISCORD_MODLOG_WEBHOOK_URL=
+TEBEX_SECRET=
+
+Testing Gates (add to your checklist)
+
+Resmon gates: core ≤0.20 ms idle; PRs may not regress idle by >0.05 ms.
+
+Flood tests: shop/money RPC spam proves clamps & tokens; no dupes or crashes.
+
+Golden paths: Onboarding; each job loop; dealership purchase; PD arrest → Court → jail release.
+
+Cross-client: Win + Linux; 30/80/150 ms latency; low-VRAM pass.
